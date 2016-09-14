@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -41,11 +42,13 @@ public class MainActivity extends ActionBarActivity implements
                 intent.putExtra("Remark1", database.getData(List.get(i).getId()).getRemark1());
                 intent.putExtra("Remark2", database.getData(List.get(i).getId()).getRemark1());
                 startActivity(intent);
+                displayList();
                 return;
             }
         }
         intent.putExtra("Id", (long) -1);
         startActivity(intent);
+        displayList();
     }
 
     public void DeleteButtonClicked(View v) {
@@ -67,22 +70,25 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void TestButtonClicked(View v) {
-        for (int i = 0; i < List.size(); i++) {
-            if (List.get(i).isSelected()) {
-                Data temp = database.getData(List.get(i).getId());
-                switch (temp.getState()) {
-                    case -1:
-                        temp.setState(1);
-                        break;
-                    case 0:
-                        temp.setState(1);
-                        break;
-                    case 1:
-                        temp.setState(0);
-                        break;
+        String target = "12345";
+        Data temp;
+        for (int i = 1; i <= database.getCount(); i++) {
+            temp = database.getData(i);
+            if (temp.getTag() != null)
+                if (temp.getTag().matches(target)) {
+                    switch (temp.getState()) {
+                        case -1:
+                            temp.setState(1);
+                            break;
+                        case 0:
+                            temp.setState(1);
+                            break;
+                        case 1:
+                            temp.setState(0);
+                            break;
+                    }
+                    database.updateData(temp);
                 }
-                database.updateData(temp);
-            }
         }
         displayList();
     }
@@ -94,13 +100,13 @@ public class MainActivity extends ActionBarActivity implements
             Data temp = database.getData(i.getId());
             switch (temp.getState()) {
                 case -1:
-                    temp.setState(1);
+                    temp.setState(0);
                     break;
                 case 0:
                     temp.setState(1);
                     break;
                 case 1:
-                    temp.setState(0);
+                    temp.setState(-1);
                     break;
             }
             database.updateData(temp);
@@ -110,10 +116,32 @@ public class MainActivity extends ActionBarActivity implements
 
     private void displayList() {
         List.clear();
+        CheckBox temp_cb1, temp_cb2, temp_cb3, temp_cb4, temp_cb5, temp_cb6, temp_cb7;
+        temp_cb1 = (CheckBox) findViewById(R.id.checkBox1);
+        temp_cb2 = (CheckBox) findViewById(R.id.checkBox2);
+        temp_cb3 = (CheckBox) findViewById(R.id.checkBox3);
+        temp_cb4 = (CheckBox) findViewById(R.id.checkBox4);
+        temp_cb5 = (CheckBox) findViewById(R.id.checkBox5);
+        temp_cb6 = (CheckBox) findViewById(R.id.checkBox6);
+        temp_cb7 = (CheckBox) findViewById(R.id.checkBox7);
+
         for (int i = 1; i <= database.getCount(); i++) {
             Data temp = database.getData(i);
-            if (temp.getName() != null)
-                List.add(new Info(temp.getId(), temp.getName(), temp.getDay(), temp.getState(), temp.getRemark1()));
+            if (temp.getName() != null) {
+                if (temp_cb1.isChecked() || temp_cb2.isChecked() || temp_cb3.isChecked() ||
+                        temp_cb4.isChecked() || temp_cb5.isChecked() ||
+                        temp_cb6.isChecked() || temp_cb7.isChecked()) {
+                    if (((temp.getDay().indexOf("1") != -1) && temp_cb1.isChecked()) ||
+                            ((temp.getDay().indexOf("2") != -1) && temp_cb2.isChecked()) ||
+                            ((temp.getDay().indexOf("3") != -1) && temp_cb3.isChecked()) ||
+                            ((temp.getDay().indexOf("4") != -1) && temp_cb4.isChecked()) ||
+                            ((temp.getDay().indexOf("5") != -1) && temp_cb5.isChecked()) ||
+                            ((temp.getDay().indexOf("6") != -1) && temp_cb6.isChecked()) ||
+                            ((temp.getDay().indexOf("7") != -1) && temp_cb7.isChecked()))
+                        List.add(new Info(temp.getId(), temp.getName(), temp.getDay(), temp.getState(), temp.getRemark1()));
+                } else
+                    List.add(new Info(temp.getId(), temp.getName(), temp.getDay(), temp.getState(), temp.getRemark1()));
+            }
         }
 
         cbAdapter = new CheckboxAdapter(List, this);

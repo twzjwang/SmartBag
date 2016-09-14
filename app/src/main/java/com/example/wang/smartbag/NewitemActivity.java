@@ -1,5 +1,6 @@
 package com.example.wang.smartbag;
 
+import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.content.Intent;
 
 public class NewitemActivity extends AppCompatActivity {
 
@@ -123,13 +125,13 @@ public class NewitemActivity extends AppCompatActivity {
         if (id == -1) {
             test1 = database.insertData(test1);
             Toast.makeText(
-                    this, name + " Saved!", Toast.LENGTH_SHORT).show();
+                    this, name + " Saved!\nPlease refresh page!", Toast.LENGTH_SHORT).show();
         } else {
             test1.setId(id);
             test1.setState(state);
             if (database.updateData(test1)) {
                 Toast.makeText(
-                        this, name + " Saved!", Toast.LENGTH_SHORT).show();
+                        this, name + " Saved!\nPlease refresh page!", Toast.LENGTH_SHORT).show();
             }
         }
         NewitemActivity.this.finish();
